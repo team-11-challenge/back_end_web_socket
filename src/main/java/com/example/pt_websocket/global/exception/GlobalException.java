@@ -1,6 +1,6 @@
 package com.example.pt_websocket.global.exception;
 
-import com.example.courseregistratioonbackend.global.enums.ErrorCode;
+import com.example.pt_websocket.global.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

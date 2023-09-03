@@ -1,7 +1,7 @@
 package com.example.pt_websocket.global.exception;
 
-import com.example.courseregistratioonbackend.global.responsedto.ApiResponse;
-import com.example.courseregistratioonbackend.global.utils.ResponseUtils;
+import com.example.pt_websocket.global.responsedto.ApiResponse;
+import com.example.pt_websocket.global.utils.ResponseUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
