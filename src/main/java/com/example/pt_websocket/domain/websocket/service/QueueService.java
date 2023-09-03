@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static com.example.pt_websocket.global.enums.SuccessCode.REGISTRATION_SUCCESS;
@@ -33,15 +34,19 @@ public class QueueService {
         final long end = LAST_ELEMENT;
 
         Set<String> queue = redisTemplate.opsForZSet().range(event.toString(), start, end);
-
-        for (String member : queue) {
+        Objects.requireNonNull(queue).parallelStream().forEach(member -> {
             Long rank = redisTemplate.opsForZSet().rank(event.toString(), member);
             if (rank != null) {
-                RegistrationRequestDto requestDto = objectMapper.readValue(member, RegistrationRequestDto.class);
+                RegistrationRequestDto requestDto;
+                try {
+                    requestDto = objectMapper.readValue(member, RegistrationRequestDto.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
                 log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", requestDto.getStudentNum(), rank);
                 simpMessageSendingOperations.convertAndSend("/sub/order/" + requestDto.getStudentNum(), rank);
             }
-        }
+        });
     }
 
     public void getResult(Event event) {
@@ -49,8 +54,7 @@ public class QueueService {
         final long end = LAST_ELEMENT;
 
         Set<String> queue = redisTemplate.opsForZSet().range(event.toString(), start, end);
-
-        for (String value : queue) {
+        Objects.requireNonNull(queue).parallelStream().forEach(value -> {
             String[] split = value.split("--pt--");
             String studentNum = split[0];
             String result = split[1];
@@ -62,6 +66,6 @@ public class QueueService {
             redisTemplate.opsForZSet().remove(event.toString(), value);
 
             simpMessageSendingOperations.convertAndSend("/sub/result/" + studentNum, result);
-        }
+        });
     }
 }
