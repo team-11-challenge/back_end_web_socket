@@ -43,7 +43,6 @@ public class QueueService {
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-                log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", requestDto.getStudentNum(), rank);
                 simpMessageSendingOperations.convertAndSend("/sub/order/" + requestDto.getStudentNum(), rank);
             }
         });
@@ -60,7 +59,7 @@ public class QueueService {
             String result = split[1];
             if(result.equals(REGISTRATION_SUCCESS.getDetail())) {
                 log.info("'{}'님의 registration 요청이 성공적으로 수행되었습니다.", studentNum);
-            } else {
+            } else if(result.startsWith("pt_cerror")) {
                 log.error(result);
             }
             redisTemplate.opsForZSet().remove(event.toString(), value);
