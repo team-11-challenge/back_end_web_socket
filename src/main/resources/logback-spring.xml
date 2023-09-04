@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="60 seconds">
 
     <!--파일 경로, 이름-->
-    <property name="LOG_PATH" value="./logs"/>
+    <property name="LOG_PATH" value="/home/ubuntu/logs"/>
     <property name="LOG_FILE_NAME" value="log"/>
     <property name="ERR_LOG_FILE_NAME" value="error_log"/>
     <!--파일 저장시 로그 형태-->
